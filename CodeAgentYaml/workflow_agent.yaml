@@ -1,0 +1,8 @@
+name: workflow_agent
+agent_class: SequentialAgent
+description: Orchestrates the sequence of code writing, reviewing, refactoring, and saving.
+sub_agents:
+  - config_path: ./writer_agent.yaml
+  - config_path: ./reviewer_agent.yaml
+  - config_path: ./refactorer_agent.yaml
+  - config_path: ./file_writer_agent.yaml

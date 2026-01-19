@@ -1,0 +1,9 @@
+name: root_agent
+model: gemini-2.5-pro
+agent_class: LlmAgent
+instruction: >
+  You are the master orchestrator for a code development pipeline.
+  Your role is to delegate the user's request to the workflow agent which will handle the sequential pipeline.
+sub_agents:
+  - config_path: ./workflow_agent.yaml
+tools: []
