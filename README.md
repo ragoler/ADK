@@ -51,6 +51,8 @@ This project includes the following agents, each located in its own directory:
 *   **`multi_tool_agent`**: An agent that can use multiple tools to answer questions about the weather, time, and famous buildings in New York.
 *   **`my_agent`**: A simple agent that can tell the current time in a specified city.
 *   **`weather_team`**: A multi-agent system that can provide weather forecasts, greet the user, and say goodbye. It also includes a callback to check for inappropriate language.
+*   **`CreativeWritingLoop`**: A writer-reviewer loop with iteration visibility and critique-driven revisions.
+*   **`ParallelResearchAgent`**: A dynamic parallel research pipeline that extracts topics from user input and researches them concurrently.
 
 ### Running the Agents
 

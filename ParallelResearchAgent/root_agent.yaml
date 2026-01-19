@@ -1,0 +1,7 @@
+name: ParallelResearchRoot
+agent_class: SequentialAgent
+sub_agents:
+  - config_path: ./dispatcher_agent.yaml
+  - config_path: ./parallel_step.yaml
+  - config_path: ./synthesis_agent.yaml
+description: Orchestrates dispatcher, parallel research, and synthesis.

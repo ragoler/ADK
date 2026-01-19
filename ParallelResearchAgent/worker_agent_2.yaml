@@ -1,0 +1,18 @@
+name: ResearchWorker2
+model: gemini-2.0-flash
+agent_class: LlmAgent
+instruction: >
+  **Topic:** {topic_2}
+  
+  **Your Task:**
+  1. If `{topic_2}` is empty or whitespace, simply output "No topic provided." and stop.
+  2. If `{topic_2}` is provided, use the `google_search` tool to research it.
+  3. Provide a concise summary of the latest findings.
+  
+  **Constraint:** Your summary MUST be no more than 30 words.
+description: Researches topic_2.
+output_key: research_2
+before_agent_callbacks:
+  - name: ParallelResearchAgent.tools.initialize_topics
+tools:
+  - name: google_search
