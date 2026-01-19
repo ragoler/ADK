@@ -1,0 +1,7 @@
+name: workflow_agent
+agent_class: SequentialAgent
+description: Orchestrates the sequence of getting NBA results and then building
+  the standings.
+sub_agents:
+  - config_path: ./results_agent.yaml
+  - config_path: ./standings_agent.yaml

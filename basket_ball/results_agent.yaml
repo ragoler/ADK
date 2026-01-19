@@ -1,0 +1,15 @@
+name: results_agent
+model: gemini-2.5-pro
+agent_class: LlmAgent
+description: An agent that uses Google Search to find NBA game scores from the last week.
+instruction: >
+  You are a sports data researcher.
+
+  Your mission is to find all the final scores for every NBA game played in the
+  last 7 days.
+
+  Present the results clearly, for example: "Golden State Warriors 120 - 110
+  Boston Celtics".
+sub_agents: []
+tools:
+  - name: google_search

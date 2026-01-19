@@ -3,3 +3,5 @@ litellm
 python-dotenv
 fastapi
 uvicorn
+google-generativeai
+pydantic

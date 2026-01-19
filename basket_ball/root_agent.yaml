@@ -1,0 +1,11 @@
+name: root_agent
+model: gemini-2.5-pro
+agent_class: LlmAgent
+instruction: >
+  You are the master orchestrator for an NBA results and standings system.
+
+  Your primary role is to delegate the task of generating NBA standings to the
+  appropriate workflow agent.
+sub_agents:
+  - config_path: ./workflow_agent.yaml
+tools: []
