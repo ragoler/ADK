@@ -45,6 +45,8 @@ This project includes the following agents, each located in its own directory:
 
 *   **`adk-streaming`**: A simple agent that uses Google Search to answer questions, demonstrating the streaming capabilities of the ADK.
 *   **`all_together_agent`**: An example based on the "Putting it all together" section of the ADK documentation. It demonstrates two agents: one that uses a tool to find the capital of a country, and another that uses an output schema to provide structured information.
+*   **`CodeAgent`**: A sequential code development pipeline (Python-based). It iterates through writing, reviewing, refactoring, and saving code to a structured directory.
+*   **`CodeAgentYaml`**: A YAML-based implementation of the code development pipeline, demonstrating how to define agents and their orchestration using YAML configuration files.
 *   **`basket_ball`**: A multi-agent system that can provide NBA standings and results.
 *   **`multi_tool_agent`**: An agent that can use multiple tools to answer questions about the weather, time, and famous buildings in New York.
 *   **`my_agent`**: A simple agent that can tell the current time in a specified city.
@@ -65,6 +67,12 @@ adk run multi_tool_agent
 
 # Run the weather team multi-agent system
 adk run weather_team
+
+# Run the sequential code pipeline (Python version)
+echo "Write a python function that calculates factorial" | adk run CodeAgent
+
+# Run the sequential code pipeline (YAML version)
+echo "Write a python function that sorts a list" | adk run CodeAgentYaml
 ```
 
 ### Special Instructions for `all_together_agent`

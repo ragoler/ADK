@@ -1,0 +1,8 @@
+name: CreativeWritingLoopAgent
+agent_class: LoopAgent
+max_iterations: 5
+description: Iteratively improves creative writing through a writer-reviewer loop.
+sub_agents:
+  - config_path: ./log_iteration_agent.yaml
+  - config_path: ./reviewer_agent.yaml
+  - config_path: ./writer_agent.yaml

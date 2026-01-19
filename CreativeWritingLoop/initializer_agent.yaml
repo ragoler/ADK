@@ -1,0 +1,8 @@
+name: InitializerAgent
+model: gemini-2.5-pro
+agent_class: LlmAgent
+instruction: >
+  Start a new creative writing project.
+  Output "No draft yet."
+output_key: current_draft
+description: Initializes the current_draft state.

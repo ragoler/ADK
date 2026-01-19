@@ -1,0 +1,6 @@
+name: CreativeWritingRoot
+agent_class: SequentialAgent
+description: Orchestrates initialization and the creative writing loop.
+sub_agents:
+  - config_path: ./initializer_agent.yaml
+  - config_path: ./loop_agent.yaml
