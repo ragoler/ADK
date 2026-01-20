@@ -75,34 +75,59 @@ echo "Write a python function that calculates factorial" | adk run CodeAgent
 
 # Run the sequential code pipeline (YAML version)
 echo "Write a python function that sorts a list" | adk run CodeAgentYaml
+
+# Run the creative writing loop
+adk run CreativeWritingLoop
+
+# Run the parallel research pipeline
+adk run ParallelResearchAgent
 ```
 
-### Special Instructions for `all_together_agent`
 
-The `all_together_agent` has its own dependencies. To install them, run:
+### Designing and running Agents
 
-```bash
-pip install -r all_together_agent/requirements.txt
-```
-
-To run the agent that uses a tool:
+You can use the `adk web --port 8000` command to visualize and edit an agent.
 
 ```bash
-adk run all_together_agent
-```
-
-To see both agents in action as described in the documentation, run the `main.py` script:
-
-```bash
-python all_together_agent/main.py
-```
-
-### Designing the Agents
-
-You can use the `adk design <agent_directory>` command to visualize and edit an agent.
-
-```bash
-adk design all_together_agent
+adk web --port 8000
 ```
 
 This will start a web server and open the ADK designer in your browser, where you can inspect the agent's properties, tools, and instructions.
+
+## GKE Deployment
+
+You can deploy the ADK web interface to Google Kubernetes Engine (GKE) for hosting.
+
+### Prerequisites
+
+-   Google Cloud project with billing enabled.
+-   `gcloud` CLI installed and authenticated.
+-   `kubectl` installed.
+
+### Deploying to GKE
+
+Run the provided deployment script. This script will automate the creation of a GKE Autopilot cluster, Artifact Registry repository, IAM permissions, and the Kubernetes deployment itself.
+
+```bash
+./deploy.sh
+```
+
+### Accessing the Web Interface
+
+The service is deployed with a `ClusterIP` for security. To access it locally:
+
+1.  **Port-forward the service:**
+
+    ```bash
+    kubectl port-forward svc/adk-web 8000:8000
+    ```
+
+2.  **Open in Browser:** Visit `http://localhost:8000`.
+
+### Teardown
+
+To delete all resources created by the deployment script (GKE cluster, AR repo, the GSA, and Kubernetes resources):
+
+```bash
+./deploy.sh --delete
+```

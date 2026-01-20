@@ -1,0 +1,45 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: adk-web
+spec:
+  type: ClusterIP
+  selector:
+    app: adk-web
+  ports:
+    - protocol: TCP
+      port: 8000
+      targetPort: 8000
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: adk-web
+  labels:
+    app: adk-web
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: adk-web
+  template:
+    metadata:
+      labels:
+        app: adk-web
+    spec:
+      serviceAccountName: adk-ksa
+      containers:
+      - name: adk-web
+        image: us-west1-docker.pkg.dev/ragoler-gke-dev/adk-repo/adk-web:latest
+        ports:
+        - containerPort: 8000
+        envFrom:
+        - secretRef:
+            name: adk-secrets
+        resources:
+          limits:
+            cpu: "1"
+            memory: "1Gi"
+          requests:
+            cpu: "500m"
+            memory: "512Mi"
