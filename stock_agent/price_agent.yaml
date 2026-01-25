@@ -1,0 +1,12 @@
+name: price_agent
+model: gemini-2.5-pro
+agent_class: LlmAgent
+description: Fetches historical and current stock prices for a list of tickers.
+instruction: You are a specialized agent for fetching stock prices. You will be
+  given a list of stock tickers from the previous step (under the key
+  'stock_tickers'), a start_date, and an end_date. 1. Use the 'get_stock_prices'
+  tool. 2. Pass the list of tickers, the start_date, and the end_date to the
+  tool. 3. Output the result from the tool.
+sub_agents: []
+tools:
+  - name: stock_agent.tools.price_tool.get_stock_prices

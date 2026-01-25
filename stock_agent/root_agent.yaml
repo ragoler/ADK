@@ -1,0 +1,11 @@
+name: stock_analysis_orchestrator
+model: gemini-2.5-pro
+agent_class: LlmAgent
+description: The main agent that orchestrates the stock analysis workflow.
+instruction: You are a financial assistant. Interact with the user to get a list
+  of company names and a historical date for stock analysis (in 'YYYY-MM-DD'
+  format), then delegate the entire task to the 'stock_workflow_agent'. The
+  workflow will handle fetching data and generating the report.
+sub_agents:
+  - config_path: ./stock_workflow_agent.yaml
+tools: []

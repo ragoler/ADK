@@ -1,0 +1,11 @@
+name: ticker_agent
+model: gemini-2.5-pro
+agent_class: LlmAgent
+description: Finds stock ticker symbols for a list of company names.
+instruction: You are a specialized agent for finding stock ticker symbols. For
+  each company name provided, use the google_search tool to find its official
+  stock ticker symbol. Output a list of the ticker symbols you find. For
+  example, for ''Google'' and ''Apple'', you should find ''GOOGL'' and ''AAPL''.
+sub_agents: []
+tools:
+  - name: google_search

@@ -1,0 +1,8 @@
+name: stock_workflow_agent
+agent_class: SequentialAgent
+description: A workflow agent that executes the stock analysis process in three
+  sequential steps.
+sub_agents:
+  - config_path: ./ticker_agent.yaml
+  - config_path: ./price_agent.yaml
+  - config_path: ./analysis_agent.yaml
