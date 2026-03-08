@@ -1,5 +1,4 @@
 name: LogIterationAgent
-model: "{{GOOGLE_GENAI_MODEL_NAME}}"
 agent_class: LlmAgent
 instruction: >
   You are an observer. Your ONLY task is to announce the start of a new iteration.

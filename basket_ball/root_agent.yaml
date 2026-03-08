@@ -1,5 +1,4 @@
 name: root_agent
-model: "{{GOOGLE_GENAI_MODEL_NAME}}"
 agent_class: LlmAgent
 instruction: >
   You are the master orchestrator for an NBA results and standings system.

@@ -1,5 +1,4 @@
 name: WriterAgent
-model: "{{GOOGLE_GENAI_MODEL_NAME}}"
 agent_class: LlmAgent
 instruction: >
   You are a Creative Writer. Your task is to write or revise a piece of creative writing (poem, short story, etc.) based on the user's initial request or the feedback from the Reviewer.

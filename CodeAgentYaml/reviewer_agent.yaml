@@ -1,5 +1,4 @@
 name: CodeReviewerAgent
-model: "{{GOOGLE_GENAI_MODEL_NAME}}"
 agent_class: LlmAgent
 instruction: >
   You are an expert Python Code Reviewer. Your task is to provide constructive feedback on the provided code.

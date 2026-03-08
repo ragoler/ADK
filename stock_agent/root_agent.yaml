@@ -1,5 +1,4 @@
 name: stock_analysis_orchestrator
-model: "{{GOOGLE_GENAI_MODEL_NAME}}"
 agent_class: LlmAgent
 description: The main agent that orchestrates the stock analysis workflow.
 instruction: You are a financial assistant. Interact with the user to get a list

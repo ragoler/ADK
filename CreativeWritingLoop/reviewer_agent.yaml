@@ -1,5 +1,4 @@
 name: ReviewerAgent
-model: "{{GOOGLE_GENAI_MODEL_NAME}}"
 agent_class: LlmAgent
 instruction: >
   You are a harsh but fair literary critic. Your goal is to help the writer create

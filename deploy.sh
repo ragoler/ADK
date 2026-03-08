@@ -34,6 +34,28 @@ DELETE_RESOURCES=false
 SKIP_INFRA=false
 ENV_VARS=()
 
+show_help() {
+  cat <<EOF
+Usage: ./deploy.sh [OPTIONS]
+
+Options:
+  --local             Build the Docker image locally instead of using Cloud Build.
+                      Requires Docker to be installed and the daemon running.
+  --no-infra          Skip infrastructure setup (APIs, IAM, Cluster, Repo, Secrets).
+                      Only build and deploy the application.
+  -e NAME=VALUE       Pass environment variables to the build process as build arguments.
+                      Can be used multiple times (e.g., -e KEY1=VAL1 -e KEY2=VAL2).
+  --delete            Teardown all resources created by this script.
+  --help              Show this help message.
+
+Examples:
+  ./deploy.sh            # Default: Create infra -> Build Cloud -> Deploy
+  ./deploy.sh --no-infra # Skip infra -> Build Cloud -> Deploy
+  ./deploy.sh --no-infra --local  # Skip infra -> Build Local -> Deploy
+  ./deploy.sh --delete   # Teardown
+EOF
+}
+
 # Argument parsing
 while [[ $# -gt 0 ]]; do
   case $1 in
@@ -59,25 +81,7 @@ while [[ $# -gt 0 ]]; do
       shift
       ;;
     --help)
-      cat <<EOF
-Usage: ./deploy.sh [OPTIONS]
-
-Options:
-  --local             Build the Docker image locally instead of using Cloud Build.
-                      Requires Docker to be installed and the daemon running.
-  --no-infra          Skip infrastructure setup (APIs, IAM, Cluster, Repo, Secrets).
-                      Only build and deploy the application.
-  -e NAME=VALUE       Pass environment variables to the build process as build arguments.
-                      Can be used multiple times (e.g., -e KEY1=VAL1 -e KEY2=VAL2).
-  --delete            Teardown all resources created by this script.
-  --help              Show this help message.
-
-Examples:
-  ./deploy.sh            # Default (Cloud Build + Infra)
-  ./deploy.sh --no-infra # Build and Deploy only
-  ./deploy.sh --local    # Build locally + Infra
-  ./deploy.sh --delete   # Teardown
-EOF
+      show_help
       exit 0
       ;;
     *)
@@ -148,47 +152,43 @@ if [ "$SKIP_INFRA" == "false" ]; then
         cloudbuild.googleapis.com \
         aiplatform.googleapis.com
 
+    # Helper function to add IAM bindings with retry
+    add_iam_binding() {
+        local MAX_RETRIES=5
+        local RETRY_DELAY=2
+        local COUNT=0
+        
+        while [ $COUNT -lt $MAX_RETRIES ]; do
+            echo "Granting $3 to $2 (Attempt $((COUNT+1)))..."
+            if gcloud projects add-iam-policy-binding "$1" \
+                --member="$2" \
+                --role="$3" --quiet > /dev/null; then
+                return 0
+            fi
+            
+            # If failed, exponential backoff
+            sleep $RETRY_DELAY
+            RETRY_DELAY=$((RETRY_DELAY * 2))
+            COUNT=$((COUNT + 1))
+        done
+        echo "Warning: Failed to add IAM binding $3 to $2 after $MAX_RETRIES attempts."
+    }
+
     # 2. Grant Storage Admin to the default compute service account
     # This is often needed for Cloud Build to access the GCS source buckets
     PROJECT_NUMBER=$(gcloud projects describe $PROJECT_ID --format="value(projectNumber)")
     COMPUTE_SERVICE_ACCOUNT="$PROJECT_NUMBER-compute@developer.gserviceaccount.com"
-    echo "Granting Storage Admin to $COMPUTE_SERVICE_ACCOUNT..."
-    gcloud projects add-iam-policy-binding $PROJECT_ID \
-        --member="serviceAccount:$COMPUTE_SERVICE_ACCOUNT" \
-        --role="roles/storage.admin"
+    
+    add_iam_binding $PROJECT_ID "serviceAccount:$COMPUTE_SERVICE_ACCOUNT" "roles/storage.admin"
+    add_iam_binding $PROJECT_ID "serviceAccount:$COMPUTE_SERVICE_ACCOUNT" "roles/storage.objectViewer"
+    add_iam_binding $PROJECT_ID "serviceAccount:$COMPUTE_SERVICE_ACCOUNT" "roles/artifactregistry.writer"
+    add_iam_binding $PROJECT_ID "serviceAccount:$COMPUTE_SERVICE_ACCOUNT" "roles/logging.logWriter"
 
-    echo "Granting Storage Object Viewer to $COMPUTE_SERVICE_ACCOUNT..."
-    gcloud projects add-iam-policy-binding $PROJECT_ID \
-        --member="serviceAccount:$COMPUTE_SERVICE_ACCOUNT" \
-        --role="roles/storage.objectViewer"
+    CLOUD_BUILD_SA_LEGACY="${PROJECT_NUMBER}@cloudbuild.gserviceaccount.com"
+    CLOUD_BUILD_SA_MODERN="service-${PROJECT_NUMBER}@gcp-sa-cloudbuild.iam.gserviceaccount.com"
 
-    echo "Granting Artifact Registry Reader to $COMPUTE_SERVICE_ACCOUNT..."
-    gcloud projects add-iam-policy-binding $PROJECT_ID \
-        --member="serviceAccount:$COMPUTE_SERVICE_ACCOUNT" \
-        --role="roles/artifactregistry.reader"
-
-    echo "Granting Artifact Registry Reader to $COMPUTE_SERVICE_ACCOUNT..."
-gcloud projects add-iam-policy-binding $PROJECT_ID \
-    --member="serviceAccount:$COMPUTE_SERVICE_ACCOUNT" \
-    --role="roles/artifactregistry.reader"
-
-echo "Granting Logs Writer to $COMPUTE_SERVICE_ACCOUNT..."
-gcloud projects add-iam-policy-binding $PROJECT_ID \
-    --member="serviceAccount:$COMPUTE_SERVICE_ACCOUNT" \
-    --role="roles/logging.logWriter"
-
-    echo "Granting Artifact Registry Writer to Cloud Build service accounts at project level..."
-    gcloud projects add-iam-policy-binding $PROJECT_ID \
-        --member="serviceAccount:$CLOUD_BUILD_SA_LEGACY" \
-        --role="roles/artifactregistry.writer" --quiet > /dev/null || true
-
-    gcloud projects add-iam-policy-binding $PROJECT_ID \
-        --member="serviceAccount:$CLOUD_BUILD_SA_MODERN" \
-        --role="roles/artifactregistry.writer" --quiet > /dev/null || true
-
-        --location=$REGION \
-        --member="serviceAccount:$CLOUD_BUILD_SA_MODERN" \
-        --role="roles/artifactregistry.writer" --quiet > /dev/null || true
+    add_iam_binding $PROJECT_ID "serviceAccount:$CLOUD_BUILD_SA_LEGACY" "roles/artifactregistry.writer"
+    add_iam_binding $PROJECT_ID "serviceAccount:$CLOUD_BUILD_SA_MODERN" "roles/artifactregistry.writer"
 
     echo "Waiting 30 seconds for IAM permissions to propagate..."
     sleep 30
@@ -241,21 +241,13 @@ if [ "$SKIP_INFRA" == "false" ]; then
         sleep 10
         
         echo "Binding Vertex AI and Search roles to GSA..."
-        gcloud projects add-iam-policy-binding $PROJECT_ID \
-            --member="serviceAccount:$GSA_EMAIL" \
-            --role="roles/aiplatform.user"
-        gcloud projects add-iam-policy-binding $PROJECT_ID \
-            --member="serviceAccount:$GSA_EMAIL" \
-            --role="roles/discoveryengine.admin"
+        add_iam_binding $PROJECT_ID "serviceAccount:$GSA_EMAIL" "roles/aiplatform.user"
+        add_iam_binding $PROJECT_ID "serviceAccount:$GSA_EMAIL" "roles/discoveryengine.admin"
     else
         echo "Google Service Account $GSA_NAME already exists."
         # Ensure bindings exist anyway in case they failed partially
-        gcloud projects add-iam-policy-binding $PROJECT_ID \
-            --member="serviceAccount:$GSA_EMAIL" \
-            --role="roles/aiplatform.user" --quiet > /dev/null
-        gcloud projects add-iam-policy-binding $PROJECT_ID \
-            --member="serviceAccount:$GSA_EMAIL" \
-            --role="roles/discoveryengine.admin" --quiet > /dev/null
+        add_iam_binding $PROJECT_ID "serviceAccount:$GSA_EMAIL" "roles/aiplatform.user"
+        add_iam_binding $PROJECT_ID "serviceAccount:$GSA_EMAIL" "roles/discoveryengine.admin"
     fi
 
     # Create Kubernetes Service Account
@@ -278,6 +270,7 @@ fi
 
 # 8. Build and Push image
 IMAGE_URL="$REGION-docker.pkg.dev/$PROJECT_ID/$REPO_NAME/$IMAGE_NAME:$TAG"
+STAGING_BUCKET="gs://${PROJECT_ID}-build-staging"
 
 if [ "$LOCAL_BUILD" == "true" ]; then
     echo "Building and pushing image to $IMAGE_URL using local Docker..."
@@ -305,14 +298,13 @@ if [ "$LOCAL_BUILD" == "true" ]; then
 else
     echo "Building and pushing image to $IMAGE_URL using Cloud Build..."
 
-    # FIX: Create a dedicated staging bucket in your region
-    STAGING_BUCKET="gs://${PROJECT_ID}-build-staging"
+    # Ensure staging bucket exists (needed even if --no-infra is set, assuming project isn't brand new)
     if ! gsutil ls -b $STAGING_BUCKET &>/dev/null; then
         echo "Creating staging bucket $STAGING_BUCKET..."
         gsutil mb -l $REGION $STAGING_BUCKET
     fi
 
-    # FIX: Explicitly tell Cloud Build to use this valid bucket
+    # Explicitly tell Cloud Build to use this valid bucket
     BUILD_ID=$(gcloud builds submit . \
         --tag $IMAGE_URL \
         --gcs-source-staging-dir="$STAGING_BUCKET/source" \
@@ -349,14 +341,19 @@ fi
 # 9. Update deployment.yaml with the new image
 echo "Updating kubernetes.yaml with image URL..."
 if [[ "$OSTYPE" == "darwin"* ]]; then
-    sed -i.bak "s|REPLACE_WITH_IMAGE_URL|$IMAGE_URL|g" kubernetes.yaml
+    sed -i.bak -e "s|image: .*|image: $IMAGE_URL|g" kubernetes.yaml
+    rm kubernetes.yaml.bak
 else
-    sed -i "s|REPLACE_WITH_IMAGE_URL|$IMAGE_URL|g" kubernetes.yaml
+    sed -i -e "s|image: .*|image: $IMAGE_URL|g" kubernetes.yaml
 fi
 
 # 10. Apply Kubernetes manifests
 echo "Applying Kubernetes manifests..."
 kubectl apply -f kubernetes.yaml
+
+# Force a rollout restart so pods pull the new 'latest' image
+echo "Restarting deployment to pull the latest image..."
+kubectl rollout restart deployment adk-web
 
 echo "Deployment complete!"
 echo "Then visit http://localhost:8000"

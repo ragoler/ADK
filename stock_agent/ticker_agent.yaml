@@ -1,5 +1,4 @@
 name: ticker_agent
-model: "{{GOOGLE_GENAI_MODEL_NAME}}"
 agent_class: LlmAgent
 description: Finds stock ticker symbols for a list of company names.
 instruction: You are a specialized agent for finding stock ticker symbols. For

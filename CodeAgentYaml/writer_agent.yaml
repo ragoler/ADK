@@ -1,5 +1,4 @@
 name: CodeWriterAgent
-model: "{{GOOGLE_GENAI_MODEL_NAME}}"
 agent_class: LlmAgent
 instruction: >
   You are a Python Code Generator. Based *only* on the user's request, write Python code that fulfills the requirement.

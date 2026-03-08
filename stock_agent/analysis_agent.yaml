@@ -1,5 +1,4 @@
 name: analysis_agent
-model: "{{GOOGLE_GENAI_MODEL_NAME}}"
 agent_class: LlmAgent
 description: Analyzes stock performance and creates a ranked table.
 instruction: "You are a financial analyst. You will receive stock price data

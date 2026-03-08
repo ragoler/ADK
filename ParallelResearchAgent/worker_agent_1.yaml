@@ -1,5 +1,4 @@
 name: ResearchWorker1
-model: "{{GOOGLE_GENAI_MODEL_NAME}}"
 agent_class: LlmAgent
 instruction: >
   **Topic:** {topic_1}

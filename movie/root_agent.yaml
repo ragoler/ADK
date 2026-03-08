@@ -1,5 +1,4 @@
 name: movie_agent
-model: "{{GOOGLE_GENAI_MODEL_NAME}}"
 agent_class: LlmAgent
 description: An agent that can provide information about a movie.
 instruction: |

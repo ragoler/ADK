@@ -1,5 +1,4 @@
 name: SynthesisAgent
-model: "{{GOOGLE_GENAI_MODEL_NAME}}"
 agent_class: LlmAgent
 instruction: >
   You are a research synthesizer. You have been provided with research results for up to three topics.

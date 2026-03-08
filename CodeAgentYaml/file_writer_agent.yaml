@@ -1,5 +1,4 @@
 name: FileWriterAgent
-model: "{{GOOGLE_GENAI_MODEL_NAME}}"
 agent_class: LlmAgent
 instruction: >
   You are a File Writer Agent. Your task is to save the provided code to a structured directory.
