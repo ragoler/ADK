@@ -1,5 +1,5 @@
 name: results_agent
-model: gemini-2.5-pro
+model: "{{GOOGLE_GENAI_MODEL_NAME}}"
 agent_class: LlmAgent
 description: An agent that uses Google Search to find NBA game scores from the last week.
 instruction: >

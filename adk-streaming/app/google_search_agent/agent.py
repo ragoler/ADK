@@ -6,7 +6,7 @@ root_agent = Agent(
     # The Large Language Model (LLM) that agent will use.
     # Please fill in the latest model id that supports live from
     # https://google.github.io/adk-docs/get-started/streaming/quickstart-streaming/#supported-models
-    model="gemini-live-2.5-flash-native-audio",
+    model=os.getenv("GOOGLE_GENAI_MODEL_NAME", "gemini-2.5-pro"),
     # A short description of the agent's purpose.
     description="Agent to answer questions using Google Search.",
     # Instructions to set the agent's behavior.

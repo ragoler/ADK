@@ -91,7 +91,7 @@ def get_famous_buildings(city: str) -> dict:
 
 root_agent = Agent(
     name="weather_time_agent",
-    model="gemini-2.5-pro",
+    model=os.getenv("GOOGLE_GENAI_MODEL_NAME", "gemini-2.5-pro"),
     description=(
         "Agent to answer questions about the time and weather in a city."
     ),

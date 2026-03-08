@@ -4,7 +4,7 @@ from tools import get_capital_city
 
 # Agent 1: Uses a tool and output_key
 root_agent = LlmAgent(
-    model="gemini-2.0-flash", # Hardcoded model name
+    model=os.getenv("GOOGLE_GENAI_MODEL_NAME", "gemini-2.5-pro"), # Hardcoded model name
     name="capital_agent_tool",
     description="Retrieves the capital city using a specific tool.",
     instruction="""You are a helpful agent that provides the capital city of a country using a tool.

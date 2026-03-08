@@ -15,7 +15,7 @@ def check_for_bad_words(callback_context: CallbackContext, llm_request: LlmReque
 
 root_agent = Agent(
     name="weather_team",
-    model="gemini-2.5-pro",
+    model=os.getenv("GOOGLE_GENAI_MODEL_NAME", "gemini-2.5-pro"),
     sub_agents=[
         weather_agent,
         greeter_agent,

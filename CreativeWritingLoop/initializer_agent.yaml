@@ -1,5 +1,5 @@
 name: InitializerAgent
-model: gemini-2.5-pro
+model: "{{GOOGLE_GENAI_MODEL_NAME}}"
 agent_class: LlmAgent
 instruction: >
   Start a new creative writing project.

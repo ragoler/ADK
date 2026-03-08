@@ -1,5 +1,5 @@
 name: ResearchWorker2
-model: gemini-2.0-flash
+model: "{{GOOGLE_GENAI_MODEL_NAME}}"
 agent_class: LlmAgent
 instruction: >
   **Topic:** {topic_2}

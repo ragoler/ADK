@@ -28,7 +28,8 @@ APP_NAME = "agent_comparison_app"
 USER_ID = "test_user_456"
 SESSION_ID_TOOL_AGENT = "session_tool_agent_xyz"
 SESSION_ID_SCHEMA_AGENT = "session_schema_agent_xyz"
-MODEL_NAME = "gemini-2.0-flash"
+import os
+MODEL_NAME = os.getenv("GOOGLE_GENAI_MODEL_NAME", "gemini-2.0-flash")
 
 # Agent 1: Uses a tool and output_key
 capital_agent_with_tool = LlmAgent(

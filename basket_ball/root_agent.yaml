@@ -1,5 +1,5 @@
 name: root_agent
-model: gemini-2.5-pro
+model: "{{GOOGLE_GENAI_MODEL_NAME}}"
 agent_class: LlmAgent
 instruction: >
   You are the master orchestrator for an NBA results and standings system.

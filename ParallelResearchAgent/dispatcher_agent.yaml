@@ -1,5 +1,5 @@
 name: DispatcherAgent
-model: gemini-2.0-flash
+model: "{{GOOGLE_GENAI_MODEL_NAME}}"
 agent_class: LlmAgent
 instruction: >
   You are a research coordinator. The user will provide one or more topics they want to research.

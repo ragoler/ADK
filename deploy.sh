@@ -1,24 +1,4 @@
 #!/bin/bash
-# ==============================================================================
-# ADK Deployment Script
-# ==============================================================================
-# This script deplops the ADK web interface to Google Kubernetes Engine (GKE).
-# It automates creating a GKE Autopilot cluster, Artifact Registry repository, 
-# IAM permissions, building the Docker image, and deploying it to the cluster.
-#
-# Prerequisites:
-# - Google Cloud project with billing enabled
-# - gcloud CLI installed and authenticated (gcloud auth login)
-# - kubectl installed (gcloud components install kubectl)
-#
-# Examples:
-#   1. Deploy the application:
-#      ./deploy.sh
-#
-#   2. Tear down the application and all created resources:
-#      ./deploy.sh --delete
-# ==============================================================================
-
 set -e
 
 # Usage:
@@ -115,7 +95,6 @@ GSA_EMAIL="$GSA_NAME@$PROJECT_ID.iam.gserviceaccount.com"
 
 
 # --- Teardown Logic ---
-# --- Teardown Logic ---
 if [ "$DELETE_RESOURCES" == "true" ]; then
   echo "Deleting all cloud resources..."
   
@@ -139,7 +118,6 @@ if [ "$DELETE_RESOURCES" == "true" ]; then
   gcloud projects remove-iam-policy-binding $PROJECT_ID --member="serviceAccount:$COMPUTE_SERVICE_ACCOUNT" --role="roles/storage.objectViewer" --condition=None --quiet || echo "IAM binding for storage.objectViewer not found."
   gcloud projects remove-iam-policy-binding $PROJECT_ID --member="serviceAccount:$COMPUTE_SERVICE_ACCOUNT" --role="roles/artifactregistry.reader" --condition=None --quiet || echo "IAM binding for artifactregistry.reader not found."
   gcloud projects remove-iam-policy-binding $PROJECT_ID --member="serviceAccount:$COMPUTE_SERVICE_ACCOUNT" --role="roles/logging.logWriter" --condition=None --quiet || echo "IAM binding for logging.logWriter not found."
-  gcloud projects remove-iam-policy-binding $PROJECT_ID --member="serviceAccount:$COMPUTE_SERVICE_ACCOUNT" --role="roles/artifactregistry.reader" --condition=None --quiet || echo "IAM binding for artifactregistry.reader not found."
   gcloud projects remove-iam-policy-binding $PROJECT_ID --member="user:$CURRENT_USER" --role="roles/storage.objectViewer" --condition=None --quiet || echo "IAM binding for user storage.objectViewer not found."
   gcloud projects remove-iam-policy-binding $PROJECT_ID --member="serviceAccount:$GSA_EMAIL" --role="roles/aiplatform.user" --condition=None --quiet || echo "IAM binding for aiplatform.user not found."
   gcloud projects remove-iam-policy-binding $PROJECT_ID --member="serviceAccount:$GSA_EMAIL" --role="roles/discoveryengine.admin" --condition=None --quiet || echo "IAM binding for discoveryengine.admin not found."

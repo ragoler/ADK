@@ -1,5 +1,5 @@
 name: standings_agent
-model: gemini-2.5-pro
+model: "{{GOOGLE_GENAI_MODEL_NAME}}"
 agent_class: LlmAgent
 description: An agent that processes game results and builds a standings table.
 instruction: >
