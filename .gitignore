@@ -5,3 +5,4 @@ __pycache__/
 *.adk/
 *.db
 */output/*
+.DS_Store
