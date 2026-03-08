@@ -2,7 +2,7 @@ from google import genai
 
 client = genai.Client(
     vertexai=True,
-    project='autoproject-ragoler',
+    project='ragoler-gke-dev',
     location='global' # Change this from us-central1
 )
 
